@@ -1,5 +1,6 @@
 package com.tobeto.kadir.rentacarsql.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tobeto.kadir.rentacarsql.entities.Rentals;
 import jakarta.persistence.*;
 
@@ -40,5 +41,6 @@ public class Users {
     private String address;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Rentals> rentals;
 }
