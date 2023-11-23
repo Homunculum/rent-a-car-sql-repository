@@ -28,6 +28,7 @@ public class RentalsController {
             GetRentalsListResponse rentalsListResponse = new GetRentalsListResponse();
             rentalsListResponse.setRentalDate(rentals.getRentalDate());
             rentalsListResponse.setReturnDate(rentals.getReturnDate());
+            getRentalsListResponses.add(rentalsListResponse);
         }
         return getRentalsListResponses;
     }

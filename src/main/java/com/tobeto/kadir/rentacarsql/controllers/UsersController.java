@@ -32,6 +32,7 @@ public class UsersController {
             usersListResponse.setPhone(users.getPhone());
             usersListResponse.setEmail(users.getEmail());
             usersListResponse.setAddress(users.getAddress());
+            getUsersListResponses.add(usersListResponse);
 
         }
         return getUsersListResponses;
