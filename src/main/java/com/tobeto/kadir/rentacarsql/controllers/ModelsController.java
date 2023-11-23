@@ -1,44 +1,61 @@
 package com.tobeto.kadir.rentacarsql.controllers;
 
 
+import com.tobeto.kadir.rentacarsql.dtos.request.AddModelsRequest;
+import com.tobeto.kadir.rentacarsql.dtos.request.UpdateModelsRequest;
+import com.tobeto.kadir.rentacarsql.dtos.responses.GetModelsListResponse;
+import com.tobeto.kadir.rentacarsql.dtos.responses.GetModelsResponse;
 import com.tobeto.kadir.rentacarsql.entities.Models;
 import com.tobeto.kadir.rentacarsql.repositories.ModelsRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/models")
 public class ModelsController {
     private final ModelsRepository modelsRepository;
 
-    public ModelsController(ModelsRepository modelsRepository) {
-
-        this.modelsRepository = modelsRepository;
-    }
-
-
     @GetMapping
-    public List<Models> getAll() {
-
-        return modelsRepository.findAll();
+    public List<GetModelsListResponse> getAll() {
+        List<Models> modelsList = modelsRepository.findAll();
+        List<GetModelsListResponse> getModelsListResponses = new ArrayList<>();
+        for (Models models : modelsList) {
+            GetModelsListResponse modelsListResponse = new GetModelsListResponse();
+            modelsListResponse.setModelName(models.getModelName());
+            modelsListResponse.setModelYear(models.getModelYear());
+            getModelsListResponses.add(modelsListResponse);
+        }
+        return getModelsListResponses;
     }
-
     @GetMapping("{id}")
-    public Models getById(@PathVariable int id) {
+    public GetModelsResponse getById(@PathVariable int id) {
 
-        return modelsRepository.findById(id).orElseThrow();
+        Models models= modelsRepository.findById(id).orElseThrow();
+        GetModelsResponse getModelsResponse = new GetModelsResponse();
+        getModelsResponse.setModelName(models.getModelName());
+        getModelsResponse.setModelYear(models.getModelYear());
+
+        return getModelsResponse;
     }
 
     @PostMapping
-    public void add(@RequestBody Models models) {
+    public void add(@RequestBody AddModelsRequest addModelsRequest) {
+        Models models = new Models();
+        models.setModelName(addModelsRequest.getModelName());
+        models.setModelYear(addModelsRequest.getModelYear());
+
         modelsRepository.save(models);
     }
 
     @PutMapping
-    public void update(@RequestBody Models models) {
-        modelsRepository.findById(models.getId()).orElseThrow();
-        modelsRepository.save(models);
+    public void update(@PathVariable int id, UpdateModelsRequest updateModelsRequest) {
+        Models models = modelsRepository.findById(id).orElseThrow();
+        models.setModelName(updateModelsRequest.getModelName());
+        models.setModelYear(updateModelsRequest.getModelYear());
     }
 
     @DeleteMapping("{id}")

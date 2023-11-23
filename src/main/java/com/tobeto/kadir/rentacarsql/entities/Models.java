@@ -22,7 +22,7 @@ public class Models {
     private int id;
 
     @Column(name = "model_car")
-    private int modelCar;
+    private int modelYear;
 
     @Column(name = "model_name")
     private String modelName;

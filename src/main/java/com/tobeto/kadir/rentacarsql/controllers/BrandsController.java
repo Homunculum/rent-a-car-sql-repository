@@ -1,44 +1,65 @@
 package com.tobeto.kadir.rentacarsql.controllers;
 
+import com.tobeto.kadir.rentacarsql.dtos.request.AddBrandsRequest;
+import com.tobeto.kadir.rentacarsql.dtos.request.UpdateBrandsRequest;
+import com.tobeto.kadir.rentacarsql.dtos.responses.GetBrandsListResponse;
+import com.tobeto.kadir.rentacarsql.dtos.responses.GetBrandsResponse;
 import com.tobeto.kadir.rentacarsql.entities.Brands;
 import com.tobeto.kadir.rentacarsql.repositories.BrandsRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("api/brands")
 public class BrandsController {
 
     private final BrandsRepository brandsRepository;
 
-    public BrandsController(BrandsRepository brandRepository) {
 
-        this.brandsRepository = brandRepository;
-    }
 
 
     @GetMapping
-    public List<Brands> getAll() {
+    public List<GetBrandsListResponse> getAll() {
 
-        return brandsRepository.findAll();
+        List<Brands> brands = brandsRepository.findAll();
+        List<GetBrandsListResponse> brandsResponseList = new ArrayList<>();
+
+        for (Brands brand: brands) {
+            GetBrandsListResponse brandsResponse = new GetBrandsListResponse();
+            brandsResponse.setBrandName(brand.getBrandName());
+            brandsResponseList.add(brandsResponse);
+            
+        }
+        return brandsResponseList;
     }
 
     @GetMapping("{id}")
-    public Brands getById(@PathVariable int id) {
+    public GetBrandsResponse getById(@PathVariable int id) {
 
-        return brandsRepository.findById(id).orElseThrow();
+        Brands brands = brandsRepository.findById(id).orElseThrow();
+        GetBrandsResponse dto = new GetBrandsResponse();
+        dto.setBrandName(brands.getBrandName());
+        return dto;
     }
 
     @PostMapping
-    public void add(@RequestBody Brands brands) {
+    public void add(@RequestBody AddBrandsRequest request) {
+
+        Brands brands = new Brands();
+        brands.setBrandName(request.getBrandName());
         brandsRepository.save(brands);
     }
 
-    @PutMapping
-    public void update(@RequestBody Brands brands) {
+    @PutMapping("{id}")
+    public void update(@PathVariable int id, @RequestBody UpdateBrandsRequest updateBrandsRequest) {
+        Brands brands = new Brands();
         brandsRepository.findById(brands.getId()).orElseThrow();
-        brandsRepository.save(brands);
+        brands.setId(updateBrandsRequest.getId());
+        brands.setBrandName(updateBrandsRequest.getBrandName());
     }
 
     @DeleteMapping("{id}")
